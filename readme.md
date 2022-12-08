@@ -4,7 +4,8 @@ Converts the [CIA World Factbook](https://www.cia.gov/library/publications/the-w
 
 ## Data
 
-* [Latest](https://www.github.com/christopherpickering/cia_world_factbook/tree/build/cia_world_factbook.json) - approx 9 MB - updated monthly
+* [Latest JSON File](https://www.github.com/christopherpickering/cia_world_factbook/tree/build/cia_world_factbook.json) - approx 10 MB - updated monthly
+* [Latest JSON File (gzip)](https://www.github.com/christopherpickering/cia_world_factbook/tree/build/cia_world_factbook.json.gz) - approx 3 MB - updated monthly
 
 ## Building your own file
 

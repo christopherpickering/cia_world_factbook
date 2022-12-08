@@ -1,5 +1,7 @@
 import json
 import os
+import gzip
+import shutil
 
 import requests
 
@@ -24,24 +26,23 @@ for country in results:
     # country summary
     # uri + /summaries/page-data.json
     slug = node["uri"].replace("/countries/", "").strip("/")
-    p = requests.get(f"{BASE_URL}{node['uri']}/summaries/page-data.json")
-    try:
-        # not all items in the country list are really countries.
-        page_json = p.json()
-        country_results = json.loads(page_json["result"]["data"]["country"]["json"])
-    except:
-        print("error in ", country["node"])
-        continue
-
-    # print(json.dumps(country_results, indent=4))
-    # print(country_results)
 
     data = {
         "title": node["title"],
         "code": node["code"],
         "uri": BASE_URL + node["uri"],
-        "region": country_results["region"],
     }
+
+    p = requests.get(f"{BASE_URL}{node['uri']}/summaries/page-data.json")
+    try:
+        # not all items in the country list are really countries.
+        page_json = p.json()
+        country_results = json.loads(page_json["result"]["data"]["country"]["json"])
+
+        data["region"] = country_results.get("region",None)
+    except:
+        print("region not found for", country["node"]["title"])
+
     OUT[slug] = data
 
     # break
@@ -216,10 +217,10 @@ for url in META_URLS:
     page_json = json.loads(p.json()["result"]["data"]["page"]["json"])["countries"]
 
     for country in page_json:
-        if country["slug"] in OUT:
-            OUT[country["slug"]][slug] = country["data"]
-        else:
-            print(country["slug"], "is missing from build.")
+        if country["slug"] not in OUT:
+            OUT[country["slug"]] = {}
+
+        OUT[country["slug"]][slug] = country["data"]
 
 RANK_URLS = [
     "/field/median-age/country-comparison",
@@ -295,6 +296,11 @@ if not os.path.isdir("data"):
 json_object = json.dumps(OUT, indent=4)
 with open("data/cia_world_factbook.json", "w") as outfile:
     outfile.write(json_object)
+
+# gzip version
+with open("data/cia_world_factbook.json", "rb") as infile:
+    with gzip.open('data/cia_world_factbook.json.gz', 'wb') as outfile:
+        shutil.copyfileobj(infile, outfile)
 
 """
 other interesting urls
