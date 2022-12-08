@@ -1,6 +1,6 @@
+import gzip
 import json
 import os
-import gzip
 import shutil
 
 import requests
@@ -17,14 +17,10 @@ page_json = p.json()
 
 results = page_json["result"]["data"]["countries"]["edges"]
 
-# iterate countries and get the summary
-
+# iterate countries and get the region
 for country in results:
     node = country["node"]
-    # print(country["node"])
 
-    # country summary
-    # uri + /summaries/page-data.json
     slug = node["uri"].replace("/countries/", "").strip("/")
 
     data = {
@@ -39,7 +35,7 @@ for country in results:
         page_json = p.json()
         country_results = json.loads(page_json["result"]["data"]["country"]["json"])
 
-        data["region"] = country_results.get("region",None)
+        data["region"] = country_results.get("region", None)
     except:
         print("region not found for", country["node"]["title"])
 
@@ -299,7 +295,7 @@ with open("data/cia_world_factbook.json", "w") as outfile:
 
 # gzip version
 with open("data/cia_world_factbook.json", "rb") as infile:
-    with gzip.open('data/cia_world_factbook.json.gz', 'wb') as outfile:
+    with gzip.open("data/cia_world_factbook.json.gz", "wb") as outfile:
         shutil.copyfileobj(infile, outfile)
 
 """
