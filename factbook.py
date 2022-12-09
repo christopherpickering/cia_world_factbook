@@ -6,6 +6,8 @@ import shutil
 import requests
 
 BASE_URL = "https://www.cia.gov/the-world-factbook/page-data"
+BASE_MEDIA_URL ="https://www.cia.gov"
+
 
 COUNTRY_URLS = []
 OUT = {}
@@ -34,9 +36,15 @@ for country in results:
         # not all items in the country list are really countries.
         page_json = p.json()
         country_results = json.loads(page_json["result"]["data"]["country"]["json"])
+        country_media = page_json["result"]["data"]["countryMedia"]["edges"][0]["node"]["media"][0]
 
         data["region"] = country_results.get("region", None)
-    except:
+
+        flag_url = list(filter(lambda x: x["type"] == "flag", page_json["result"]["data"]["countryMedia"]["edges"][0]["node"]["media"]))[0]["full"]["localFile"]["publicURL"]
+
+        data["flag_url"] = (BASE_MEDIA_URL + flag_url) if flag_url else ""
+    except BaseException as e:
+        # print(e)
         print("region not found for", country["node"]["title"])
 
     OUT[slug] = data
