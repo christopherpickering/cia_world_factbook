@@ -1,3 +1,5 @@
+Archiving in favor of https://github.com/factbook/factbook.json
+
 # CIA World Factbook
 
 Converts the [CIA World Factbook](https://www.cia.gov/library/publications/the-world-factbook/index.html) into a json data structure.
